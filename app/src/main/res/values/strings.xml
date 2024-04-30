@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">MobileAppNewV</string>
+    <string name="logoAssetImage">Logo</string>
+    <string name="appName">La Gourmetise</string>
+    <string name="heroBanner">Hero banner</string>
+    <string name="concoursName">La meilleure boulangerie</string>
+</resources>

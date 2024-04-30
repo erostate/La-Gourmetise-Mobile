@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <include
+        android:id="@+id/header"
+        layout="@layout/component_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="0dp"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <include
+        android:id="@+id/heroBanner"
+        layout="@layout/component_hero_banner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="0dp"
+        app:layout_constraintTop_toBottomOf="@+id/header" />
+
+    <Button
+        android:id="@+id/goBack"
+        style="@style/Widget.Material3.Button.OutlinedButton.Icon"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="8dp"
+        android:text="Annuler"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textColorHint="#FFFFFF"
+        android:textSize="23sp"
+        app:cornerRadius="5dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:strokeColor="@color/accentBackground"
+        app:strokeWidth="3dp" />
+
+    <LinearLayout
+        android:id="@+id/containerCompanyNote"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="250dp"
+        android:layout_marginEnd="10dp"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/be_vietnam"
+            android:lineSpacingExtra="-5sp"
+            android:text="Note de l'entreprise"
+            android:textColor="#fff"
+            android:textSize="25sp"
+            android:textStyle="bold" />
+
+        <RatingBar
+            android:id="@+id/ratingCompanyNote"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:max="5"
+            android:numStars="5"
+            android:progressBackgroundTint="#A8A8A8"
+            android:progressTint="#e8d71d"
+            android:rating="0"
+            android:stepSize="1" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/containerProductNote"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginTop="5dp"
+        app:layout_constraintTop_toBottomOf="@+id/containerCompanyNote"
+        tools:layout_editor_absoluteX="5dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/be_vietnam"
+            android:lineSpacingExtra="-5sp"
+            android:text="Note du/des produits"
+            android:textColor="#fff"
+            android:textSize="25sp"
+            android:textStyle="bold" />
+
+        <RatingBar
+            android:id="@+id/ratingProductNote"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:max="5"
+            android:numStars="5"
+            android:progressBackgroundTint="#A8A8A8"
+            android:progressTint="#e8d71d"
+            android:rating="0"
+            android:stepSize="1" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/containerPriceNote"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginTop="5dp"
+        app:layout_constraintTop_toBottomOf="@+id/containerProductNote"
+        tools:layout_editor_absoluteX="5dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/be_vietnam"
+            android:lineSpacingExtra="-5sp"
+            android:text="Note des prix"
+            android:textColor="#fff"
+            android:textSize="25sp"
+            android:textStyle="bold" />
+
+        <RatingBar
+            android:id="@+id/ratingPriceNote"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:max="5"
+            android:numStars="5"
+            android:progressBackgroundTint="#A8A8A8"
+            android:progressTint="#e8d71d"
+            android:rating="0"
+            android:stepSize="1" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/containerStaffNote"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginTop="5dp"
+        app:layout_constraintTop_toBottomOf="@+id/containerPriceNote"
+        tools:layout_editor_absoluteX="5dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/be_vietnam"
+            android:lineSpacingExtra="-5sp"
+            android:text="Note de l'équipe"
+            android:textColor="#fff"
+            android:textSize="25sp"
+            android:textStyle="bold" />
+
+        <RatingBar
+            android:id="@+id/ratingStaffNote"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:max="5"
+            android:numStars="5"
+            android:progressBackgroundTint="#A8A8A8"
+            android:progressTint="#e8d71d"
+            android:rating="0"
+            android:stepSize="1" />
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/sendBakeryRating"
+        style="@style/Widget.Material3.Button.OutlinedButton.Icon"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
+        android:text="Valider"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textColorHint="#FFFFFF"
+        android:textSize="23sp"
+        app:cornerRadius="5dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:strokeColor="@color/accentBackground"
+        app:strokeWidth="3dp" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
