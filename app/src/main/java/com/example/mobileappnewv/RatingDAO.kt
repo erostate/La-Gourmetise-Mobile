@@ -14,6 +14,14 @@ interface RatingDAO {
     @Query("INSERT INTO ratings (candidateId, code, companyRating, productRating, priceRating, staffRating, date) VALUES (:candidateId, :code, :companyRating, :productRating, :priceRating, :staffRating, :date)")
     suspend fun insertRating(candidateId: Int, code: String, companyRating: Int, productRating: Int, priceRating: Int, staffRating: Int, date: String)
 
+    // Update a rating in the database with code
+    @Query("UPDATE ratings SET companyRating = :companyRating, productRating = :productRating, priceRating = :priceRating, staffRating = :staffRating, date = :date WHERE code = :code")
+    suspend fun updateRating(code: String, companyRating: Int, productRating: Int, priceRating: Int, staffRating: Int, date: String)
+
+    // Delete all ratings from the database
+    @Query("DELETE FROM ratings")
+    suspend fun deleteAllRatings()
+
     // Get all ratings from the database
     @Query("SELECT * FROM ratings")
     suspend fun getAllRatings(): List<Rating>
@@ -29,4 +37,6 @@ interface RatingDAO {
     // Check if the code is already in the database
     @Query("SELECT * FROM ratings WHERE code = :code")
     suspend fun getRatingByCode(code: String): Rating
+
+    // Get all ratings from the database that have not been exported
 }

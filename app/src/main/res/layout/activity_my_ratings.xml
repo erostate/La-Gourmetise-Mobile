@@ -5,6 +5,90 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MyRatingsActivity">
+    tools:context=".MainActivity">
+
+    <include
+        android:id="@+id/header"
+        layout="@layout/component_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="0dp"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <include
+        android:id="@+id/heroBanner"
+        layout="@layout/component_hero_banner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="0dp"
+        app:layout_constraintTop_toBottomOf="@+id/header" />
+
+    <Button
+        android:id="@+id/goBack"
+        style="@style/Widget.Material3.Button.OutlinedButton.Icon"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="8dp"
+        android:text="Annuler"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textColorHint="#FFFFFF"
+        android:textSize="23sp"
+        app:cornerRadius="5dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:strokeColor="@color/accentBackground"
+        app:strokeWidth="3dp" />
+
+    <ListView
+        android:id="@+id/containerAllRatings"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="230dp"
+        android:layout_marginBottom="55dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0" >
+
+        <Button
+            android:id="@+id/postBakeryRating"
+            style="@style/Widget.Material3.Button.OutlinedButton.Icon"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="Envoyer les notes"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textColorHint="#FFFFFF"
+            android:textSize="23sp"
+            app:cornerRadius="5dp"
+            app:strokeColor="@color/accentBackground"
+            app:strokeWidth="3dp" />
+
+        <Button
+            android:id="@+id/deleteBakeryRating"
+            style="@style/Widget.Material3.Button.OutlinedButton.Icon"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="Supprimer les notes"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textColorHint="#FFFFFF"
+            android:textSize="23sp"
+            app:cornerRadius="5dp"
+            app:strokeColor="@color/accentBackground"
+            app:strokeWidth="3dp" />
+
+    </LinearLayout>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

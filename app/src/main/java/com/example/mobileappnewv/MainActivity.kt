@@ -71,25 +71,33 @@ class MainActivity : AppCompatActivity() {
                     builder.setMessage("Ce code a déjà été saisi.\nVoulez-vous le modifier ?\n\nID: ${rating.id}\nCode: ${rating.code}")
                     builder.setPositiveButton("Oui") { _, _ ->
                         val ratingPage = Intent(this@MainActivity, RatingActivity::class.java)
+                        ratingPage.putExtra("code", rating.code)
+                        ratingPage.putExtra("candidateId", rating.candidateId)
+                        ratingPage.putExtra("stars1", rating.companyRating ?: 0)
+                        ratingPage.putExtra("stars2", rating.productRating ?: 0)
+                        ratingPage.putExtra("stars3", rating.priceRating ?: 0)
+                        ratingPage.putExtra("stars4", rating.staffRating ?: 0)
                         startActivity(ratingPage)
                         finish()
                     }
                     builder.setNegativeButton("Non", null)
                     builder.show()
                     return@launch
+                } else {
+                    // Insert the code into the database
+                    val addRating = Rating(0, candidateId, code, null, null, null, null, 0, "")
+                    lifecycleScope.launch {
+                        ratingDAO.insert(addRating)
+                    }
+
+                    // Change to the rating page
+                    val ratingPage = Intent(this@MainActivity, RatingActivity::class.java)
+                    ratingPage.putExtra("code", code)
+                    ratingPage.putExtra("candidateId", candidateId)
+                    startActivity(ratingPage)
+                    finish()
                 }
             }
-
-            // Insert the code into the database
-            val rating = Rating(0, candidateId, code, null, null, null, null, 0, "")
-            lifecycleScope.launch {
-                ratingDAO.insert(rating)
-            }
-
-            // Change to the rating page
-//            val ratingPage = Intent(this, RatingActivity::class.java)
-//            startActivity(ratingPage)
-//            finish()
         }
     }
 
