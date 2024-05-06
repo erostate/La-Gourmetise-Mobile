@@ -38,5 +38,7 @@ interface RatingDAO {
     @Query("SELECT * FROM ratings WHERE code = :code")
     suspend fun getRatingByCode(code: String): Rating
 
-    // Get all ratings from the database that have not been exported
+    // Export a rating to the server
+    @Query("UPDATE ratings SET exported = 1 WHERE code = :code")
+    suspend fun exportRating(code: String)
 }

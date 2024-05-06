@@ -1,6 +1,7 @@
 package com.example.mobileappnewv
 
 import android.content.Intent
+import android.graphics.Typeface
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
@@ -34,6 +35,8 @@ class MainActivity : AppCompatActivity() {
             val ratings = ratingDAO.getUnexportedRatings()
             if (ratings.isNotEmpty()) {
                 btnViewMyRatings.isEnabled = true
+                btnViewMyRatings.text = "Voir mes votes (${ratings.count()})"
+                btnViewMyRatings.setTypeface(null, Typeface.NORMAL)
             }
         }
 
