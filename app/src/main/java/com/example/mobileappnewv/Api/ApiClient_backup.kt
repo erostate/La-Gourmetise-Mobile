@@ -13,19 +13,15 @@ import java.util.concurrent.Callable
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.FutureTask
 
-interface ApiService {
-
-
-    private fun getApiUrl(): String {
-        return "http://10.0.2.2:8000/api/"
-    }
+class ApiClient_backup {
+    private val BASE_URL = "http://10.0.2.2:8000/api/"
 
     fun exportRatings(context: Context?, ratingBody: RatingBody): String {
         val futureTask = FutureTask<String>(object : Callable<String?> {
             var returnStatement = "cant_access_to_request"
             override fun call(): String {
                 try {
-                    val url = URL(getApiUrl() + "ratings?code=" + ratingBody.code)
+                    val url = URL(BASE_URL + "ratings?code=" + ratingBody.code)
                     val conn = url.openConnection() as HttpURLConnection
                     conn.setRequestMethod("POST")
                     conn.setRequestProperty("Accept", "application/ld+json")
