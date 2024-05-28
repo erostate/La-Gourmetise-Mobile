@@ -68,59 +68,64 @@
             android:layout_width="65dp"
             android:layout_height="wrap_content"
             android:autofillHints="X"
-            android:hint="X"
             android:backgroundTint="#fff"
+            android:hint="X"
+            android:inputType="number"
+            android:textAlignment="center"
             android:textColor="#fff"
-            android:textColorHint="#BABAB2"
-            android:textAlignment="center" />
+            android:textColorHint="#BABAB2" />
 
         <EditText
             android:id="@+id/code2"
             android:layout_width="65dp"
             android:layout_height="wrap_content"
+            android:inputType="textCapCharacters"
             android:autofillHints="XXXX"
-            android:hint="XXXX"
             android:backgroundTint="#fff"
-            android:textColor="#fff"
-            android:textColorHint="#BABAB2"
+            android:hint="XXXX"
+            android:maxLength="4"
             android:textAlignment="center"
-            android:maxLength="4" />
+            android:textColor="#fff"
+            android:textColorHint="#BABAB2" />
 
         <EditText
             android:id="@+id/code3"
             android:layout_width="65dp"
             android:layout_height="wrap_content"
+            android:inputType="textCapCharacters"
             android:autofillHints="XXXX"
-            android:hint="XXXX"
             android:backgroundTint="#fff"
-            android:textColor="#fff"
-            android:textColorHint="#BABAB2"
+            android:hint="XXXX"
+            android:maxLength="4"
             android:textAlignment="center"
-            android:maxLength="4" />
+            android:textColor="#fff"
+            android:textColorHint="#BABAB2" />
 
         <EditText
             android:id="@+id/code4"
             android:layout_width="65dp"
             android:layout_height="wrap_content"
+            android:inputType="textCapCharacters"
             android:autofillHints="XXXX"
-            android:hint="XXXX"
             android:backgroundTint="#fff"
-            android:textColor="#fff"
-            android:textColorHint="#BABAB2"
+            android:hint="XXXX"
+            android:maxLength="4"
             android:textAlignment="center"
-            android:maxLength="4" />
+            android:textColor="#fff"
+            android:textColorHint="#BABAB2" />
 
         <EditText
             android:id="@+id/code5"
             android:layout_width="65dp"
             android:layout_height="wrap_content"
+            android:inputType="textCapCharacters"
             android:autofillHints="XXXX"
-            android:hint="XXXX"
             android:backgroundTint="#fff"
-            android:textColor="#fff"
-            android:textColorHint="#BABAB2"
+            android:hint="XXXX"
+            android:maxLength="4"
             android:textAlignment="center"
-            android:maxLength="4" />
+            android:textColor="#fff"
+            android:textColorHint="#BABAB2" />
 
     </LinearLayout>
 

@@ -12,7 +12,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.room.Room
-import androidx.room.migration.Migration
+import com.example.mobileappnewv.DAO.Rating
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
@@ -88,7 +88,7 @@ class MainActivity : AppCompatActivity() {
                     return@launch
                 } else {
                     // Insert the code into the database
-                    val addRating = Rating(0, candidateId, code, null, null, null, null, 0, "")
+                    val addRating = Rating(0, candidateId, code, null, null, null, null, 0, 0, "")
                     lifecycleScope.launch {
                         ratingDAO.insert(addRating)
                     }
@@ -105,9 +105,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initDb(): AppDatabase {
-        return Room.databaseBuilder(
-            applicationContext,
-            AppDatabase::class.java, "mydatabase.db"
-        ).addMigrations(AppDatabase.MIGRATION_1_2).build()
+        return AppDatabase.initDb(this)
     }
 }

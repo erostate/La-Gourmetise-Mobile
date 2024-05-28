@@ -30,7 +30,7 @@
         android:layout_height="50dp"
         android:layout_marginTop="10dp"
         android:layout_marginEnd="8dp"
-        android:text="Annuler"
+        android:text="Retour"
         android:textAlignment="center"
         android:textColor="@color/white"
         android:textColorHint="#FFFFFF"
@@ -66,7 +66,7 @@
         <Button
             android:id="@+id/postBakeryRating"
             style="@style/Widget.Material3.Button.OutlinedButton.Icon"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:text="Envoyer les notes"
             android:textAlignment="center"
@@ -76,20 +76,21 @@
             app:cornerRadius="5dp"
             app:strokeColor="@color/accentBackground"
             app:strokeWidth="3dp" />
+<!--        android:layout_width="wrap_content"-->
 
-        <Button
-            android:id="@+id/deleteBakeryRating"
-            style="@style/Widget.Material3.Button.OutlinedButton.Icon"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:text="Supprimer les notes"
-            android:textAlignment="center"
-            android:textColor="@color/white"
-            android:textColorHint="#FFFFFF"
-            android:textSize="23sp"
-            app:cornerRadius="5dp"
-            app:strokeColor="@color/accentBackground"
-            app:strokeWidth="3dp" />
+<!--        <Button-->
+<!--            android:id="@+id/deleteBakeryRating"-->
+<!--            style="@style/Widget.Material3.Button.OutlinedButton.Icon"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:text="Supprimer les notes"-->
+<!--            android:textAlignment="center"-->
+<!--            android:textColor="@color/white"-->
+<!--            android:textColorHint="#FFFFFF"-->
+<!--            android:textSize="23sp"-->
+<!--            app:cornerRadius="5dp"-->
+<!--            app:strokeColor="@color/accentBackground"-->
+<!--            app:strokeWidth="3dp" />-->
 
     </LinearLayout>
 

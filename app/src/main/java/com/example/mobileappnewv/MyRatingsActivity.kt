@@ -1,7 +1,5 @@
 package com.example.mobileappnewv
 
-//import com.example.mobileappnewv.Api.RatingBody
-
 import android.app.Dialog
 import android.content.Context
 import android.content.Intent
@@ -23,22 +21,14 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.room.Room
-import com.android.volley.AuthFailureError
-import com.android.volley.Request
-import com.android.volley.RequestQueue
-import com.android.volley.Response
-import com.android.volley.VolleyError
-import com.android.volley.toolbox.JsonObjectRequest
-import com.android.volley.toolbox.StringRequest
-import com.android.volley.toolbox.Volley
 import com.example.mobileappnewv.Api.ApiClient
+import com.example.mobileappnewv.DAO.ErrorRatingDAO
+import com.example.mobileappnewv.DAO.Rating
+import com.example.mobileappnewv.DAO.RatingDAO
 import kotlinx.coroutines.launch
-import okhttp3.OkHttpClient
-import org.json.JSONObject
-import java.io.IOException
+import okhttp3.internal.http2.ErrorCode
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-
 
 class MyRatingsActivity : AppCompatActivity() {
     inner class MyArrayAdapter(context: Context, resource: Int, objects: ArrayList<String>) :
@@ -70,6 +60,7 @@ class MyRatingsActivity : AppCompatActivity() {
 
         val db = initDb()
         val ratingDAO = db.ratingDAO()
+        val errorRatingDAO = db.errorRatingDAO()
 
         val containerAllRatings = findViewById<ListView>(R.id.containerAllRatings)
         val allRatingsArray = ArrayList<String>()
@@ -79,6 +70,11 @@ class MyRatingsActivity : AppCompatActivity() {
 
         // Get all ratings from the database
         lifecycleScope.launch {
+            if (ratingDAO.countUnexportedRatings() <= 0) {
+                val intent = Intent(this@MyRatingsActivity, MainActivity::class.java)
+                startActivity(intent)
+            }
+
             val ratings = ratingDAO.getUnexportedRatings()
             var index = 1
             for (rating in ratings) {
@@ -98,7 +94,20 @@ class MyRatingsActivity : AppCompatActivity() {
                     "${dateTime.dayOfMonth}/${dateTime.monthValue}/${dateTime.year} à ${dateTime.hour}h${dateTime.minute}"
                 }
 
-                allRatingsArray.add("ID candidat: $candidateId\nCode: $code\nNote: $finalRating/20\nDate: $formattedDate")
+                val ratingIsError = ratingIsAnError(ratingDAO, errorRatingDAO, code)
+                val strRatingIsError = if (ratingIsError) {
+                    "\n(Erreur: Cliquer pour voir plus de détails)"
+                } else {
+                    ""
+                }
+
+                allRatingsArray.add("ID candidat: $candidateId\nCode: $code\nNote: $finalRating/20\nDate: $formattedDate $strRatingIsError")
+                // Click on a rating to see more details
+                containerAllRatings.setOnItemClickListener { _, _, position, _ ->
+                    val detailPage = Intent(this@MyRatingsActivity, MyErrorRatingsActivity::class.java)
+                    startActivity(detailPage)
+                }
+
                 adapter.notifyDataSetChanged()
 
                 index++
@@ -113,21 +122,12 @@ class MyRatingsActivity : AppCompatActivity() {
                 if (ratings.count() >= 5) {
                     exportRatings(ratingDAO)
                 } else {
-                    exportRatings(ratingDAO)
-//                    val builder = androidx.appcompat.app.AlertDialog.Builder(this@MyRatingsActivity)
-//                    builder.setTitle("Erreur")
-//                    builder.setMessage("Vous devez saisir au moins 5 notes pour les exporter.")
-//                    builder.setPositiveButton("OK", null)
-//                    builder.show()
+                    showAlert(
+                        context = this@MyRatingsActivity,
+                        title = "Erreur",
+                        message = "Vous devez saisir au moins 5 notes pour les exporter."
+                    )
                 }
-            }
-        }
-
-        val deleteBakeryRating = findViewById<Button>(R.id.deleteBakeryRating)
-        deleteBakeryRating.setOnClickListener {
-            // Delete all ratings from the database
-            lifecycleScope.launch {
-                ratingDAO.deleteAllRatings()
             }
         }
 
@@ -140,10 +140,7 @@ class MyRatingsActivity : AppCompatActivity() {
     }
 
     private fun initDb(): AppDatabase {
-        return Room.databaseBuilder(
-            applicationContext,
-            AppDatabase::class.java, "mydatabase.db"
-        ).addMigrations(AppDatabase.MIGRATION_1_2).build()
+        return AppDatabase.initDb(this)
     }
 
     private suspend fun exportRatings(ratingDAO: RatingDAO) {
@@ -155,201 +152,144 @@ class MyRatingsActivity : AppCompatActivity() {
         )
         loadingDialog.show()
 
-        var statement = false
-
         val apiClient = ApiClient()
 
         val ratings = ratingDAO.getUnexportedRatings()
         if (ratings.count() >= 5) {
-            for (rating in ratings) {
-                val companyRating = rating.companyRating ?: 0
-                val productRating = rating.productRating?: 0
-                val priceRating = rating.priceRating?: 0
-                val staffRating = rating.staffRating?: 0
-//                val ratingBody = RatingBody(rating.code, companyRating, productRating, priceRating, staffRating)
-                val call = apiClient.exportRatings(this@MyRatingsActivity, rating.code, companyRating, productRating, priceRating, staffRating)
-                println("__--__RESULT__--__")
-                println(call)
-//                if (call == "success") {
-//                    ratingDAO.exportRating(rating.code)
-//
-//                    val builder = AlertDialog.Builder(this@MyRatingsActivity)
-//                    builder.setTitle("Succès")
-//                    builder.setMessage("Les notes ont bien été exportées.")
-//                    builder.setPositiveButton("Ok") { _, _ ->
-//                        val mainPage = Intent(this@MyRatingsActivity, MainActivity::class.java)
-//                        startActivity(mainPage)
-//                        finish()
-//                    }
-//                    builder.show()
-//
-//                    break
-//                } else if (call == "rating_not_posted") {
-//                    val builder = AlertDialog.Builder(this@MyRatingsActivity)
-//                    builder.setTitle("Erreur")
-//                    builder.setMessage("Une erreur est survenue lors de l'exportation de la note.\nCode utilisé: ${rating.code}")
-//                    builder.setPositiveButton("OK", null)
-//                    builder.setNegativeButton("Modifier le code") { _, _ ->
-//                        // TODO: Create the Activity
-//                        val mainPage = Intent(this@MyRatingsActivity, MainActivity::class.java)
-//                        startActivity(mainPage)
-//                        finish()
-//                    }
-//                    builder.show()
-//                } else if (call == "code-not-gived") {
-//                    val builder = AlertDialog.Builder(this@MyRatingsActivity)
-//                    builder.setTitle("Erreur")
-//                    builder.setMessage("Le code saisi n'a pas été donné par une boulangerie.\nCode utilisé: ${rating.code}")
-//                    builder.setPositiveButton("OK", null)
-//                    builder.setNegativeButton("Modifier le code") { _, _ ->
-//                        // TODO: Create the Activity
-//                        val mainPage = Intent(this@MyRatingsActivity, MainActivity::class.java)
-//                        startActivity(mainPage)
-//                        finish()
-//                    }
-//                    builder.show()
-//                } else if (call == "code-already-used") {
-//                    val builder = AlertDialog.Builder(this@MyRatingsActivity)
-//                    builder.setTitle("Erreur")
-//                    builder.setMessage("Le code saisi a déjà été utilisé.\nCode: ${rating.code}")
-//                    builder.setPositiveButton("OK", null)
-//                    builder.setNegativeButton("Modifier le code") { _, _ ->
-//                        // TODO: Create the Activity
-//                        val mainPage = Intent(this@MyRatingsActivity, MainActivity::class.java)
-//                        startActivity(mainPage)
-//                        finish()
-//                    }
-//                    builder.show()
-//                } else {
-//                    val builder = AlertDialog.Builder(this@MyRatingsActivity)
-//                    builder.setTitle("Erreur")
-//                    builder.setMessage("Une erreur est survenue lors de l'exportation des notes.")
-//                    builder.setPositiveButton("OK", null)
-//                    builder.show()
-//                }
+            lifecycleScope.launch {
+                val db = initDb()
+                val errorRatingDAO = db.errorRatingDAO()
 
-                // Check if the iteration is the last one
-                if (ratings.indexOf(rating) == ratings.size - 1) {
-                    statement = true
-                    loadingDialog.dismiss()
-                }
-            }
-        } else {
-            for (rating in ratings) {
-                val companyRating = rating.companyRating ?: 0
-                val productRating = rating.productRating?: 0
-                val priceRating = rating.priceRating?: 0
-                val staffRating = rating.staffRating?: 0
+                val totalElements = ratings.count()
+                var statusSuccess = 0
+                var statusCodeNotFound = 0
+                var statusCodeNotGived = 0
+                var statusCodeAlreadyUsed = 0
+                var statusError = 0
 
-                val url = "http://10.0.2.7:8000/api/ratings?code=${rating.code}"
+                for (rating in ratings) {
+                    val companyRating = rating.companyRating ?: 0
+                    val productRating = rating.productRating?: 0
+                    val priceRating = rating.priceRating?: 0
+                    val staffRating = rating.staffRating?: 0
 
-                val reqBody = JSONObject()
-                reqBody.put("companyRating", companyRating)
-                reqBody.put("productRating", productRating)
-                reqBody.put("priceRating", priceRating)
-                reqBody.put("staffRating", staffRating)
-
-                val client: OkHttpClient = OkHttpClient()
-                val request: okhttp3.Request = okhttp3.Request.Builder()
-                    .url(url)
-                    .post(
-                        okhttp3.RequestBody.create(
-                            okhttp3.MediaType.parse("application/ld+json"),
-                            reqBody.toString()
-                        )
+                    val call = apiClient.exportRatings(
+                        this@MyRatingsActivity,
+                        rating.code,
+                        companyRating,
+                        productRating,
+                        priceRating,
+                        staffRating
                     )
-                    .addHeader("Content-Type", "application/ld+json")
-                    .addHeader("Accept", "application/ld+json")
-                    .build()
 
-                client.newCall(request).enqueue(object : okhttp3.Callback {
-                    override fun onFailure(call: okhttp3.Call, e: IOException) {
-                        println("_____REQUEST FAILED_____")
-                        println(e)
-                        println("_____REQUEST FAILED_____")
-                    }
-
-                    override fun onResponse(call: okhttp3.Call, response: okhttp3.Response) {
-                        val responseData = response.body()?.string()
-
-                        // Get the response body
-                        val jsonObject = responseData?.let { JSONObject(it) }
-                        val result = jsonObject?.getString("result")
-
-                        runOnUiThread {
-                            when (result) {
-                                "rating-not-posted" -> {
-                                    println("_____Rating not posted_____")
-                                    val builder = AlertDialog.Builder(this@MyRatingsActivity)
-                                    builder.setTitle("Erreur")
-                                    builder.setMessage("Une erreur est survenue lors de l'exportation de la note.\nCode utilisé: ${rating.code}")
-                                    builder.setPositiveButton("OK", null)
-                                    builder.setNegativeButton("Modifier le code") { _, _ ->
-                                        // TODO: Create the Activity
-                                        val mainPage = Intent(this@MyRatingsActivity, MainActivity::class.java)
-                                        startActivity(mainPage)
-                                        finish()
-                                    }
-                                    builder.show()
-                                }
-                                "code-not-gived" -> {
-                                    println("_____Code not gived_____")
-                                    val builder = AlertDialog.Builder(this@MyRatingsActivity)
-                                    builder.setTitle("Erreur")
-                                    builder.setMessage("Le code saisi n'a pas été donné par une boulangerie.\nCode utilisé: ${rating.code}")
-                                    builder.setPositiveButton("OK", null)
-                                    builder.setNegativeButton("Modifier le code") { _, _ ->
-                                        // TODO: Create the Activity
-                                        val mainPage = Intent(this@MyRatingsActivity, MainActivity::class.java)
-                                        startActivity(mainPage)
-                                        finish()
-                                    }
-                                    builder.show()
-                                }
-                                "code-already-used" -> {
-                                    println("_____Code already used_____")
-                                    val builder = AlertDialog.Builder(this@MyRatingsActivity)
-                                    builder.setTitle("Erreur")
-                                    builder.setMessage("Le code saisi a déjà été utilisé.\nCode: ${rating.code}")
-                                    builder.setPositiveButton("OK", null)
-                                    builder.setNegativeButton("Modifier le code") { _, _ ->
-                                        // TODO: Create the Activity
-                                        val mainPage = Intent(this@MyRatingsActivity, MainActivity::class.java)
-                                        startActivity(mainPage)
-                                        finish()
-                                    }
-                                    builder.show()
-                                }
-                                else -> {
-                                    println("_____Success_____")
-                                    lifecycleScope.launch {
-                                        ratingDAO.exportRating(rating.code)
-                                    }
-
-                                    val builder = AlertDialog.Builder(this@MyRatingsActivity)
-                                    builder.setTitle("Succès")
-                                    builder.setMessage("Les notes ont bien été exportées.")
-                                    builder.setPositiveButton("Ok") { _, _ ->
-                                        val mainPage = Intent(this@MyRatingsActivity, MainActivity::class.java)
-                                        startActivity(mainPage)
-                                        finish()
-                                    }
-                                    builder.show()
-                                }
-                            }
+                    when (call) {
+                        "success" -> {
+                            statusSuccess++
+                            ratingDAO.exportRating(rating.code)
+                        }
+                        "code-not-found" -> {
+                            statusCodeNotFound++
+                            errorRatingDAO.insertErrorRatingByStatus(rating.candidateId, rating.code, companyRating, productRating, priceRating, staffRating, "code-not-found")
+                        }
+                        "code-not-gived" -> {
+                            statusCodeNotGived++
+                            errorRatingDAO.insertErrorRatingByStatus(rating.candidateId, rating.code, companyRating, productRating, priceRating, staffRating, "code-not-gived")
+                        }
+                        "code-already-used" -> {
+                            statusCodeAlreadyUsed++
+                            errorRatingDAO.insertErrorRatingByStatus(rating.candidateId, rating.code, companyRating, productRating, priceRating, staffRating, "code-already-used")
+                        }
+                        else -> {
+                            statusError++
+                            errorRatingDAO.insertErrorRatingByStatus(rating.candidateId, rating.code, companyRating, productRating, priceRating, staffRating, "error")
                         }
                     }
-                })
-
-                // Check if the iteration is the last one
-                if (ratings.indexOf(rating) == ratings.size - 1) {
-                    statement = true
-                    loadingDialog.dismiss()
                 }
-            }
 
-            statement = true
+                if (statusSuccess + statusCodeNotFound + statusCodeNotGived + statusCodeAlreadyUsed + statusError == totalElements) {
+                    if (statusSuccess == totalElements) {
+                        showAlert(
+                            context = this@MyRatingsActivity,
+                            title = "Succès",
+                            message = "Toutes les notes ont bien été exportées.",
+                            positiveAction = {
+                                val mainPage = Intent(this@MyRatingsActivity, MainActivity::class.java)
+                                startActivity(mainPage)
+                                finish()
+                            }
+                        )
+                    } else {
+                        var strMessage = "Une erreur est survenue lors de l'exportation des notes :\n"
+                        if (statusCodeNotFound > 0) {
+                            strMessage += "- $statusCodeNotFound code(s) saisi(s) n'existe(nt) pas.\n"
+                        }
+                        if (statusCodeNotGived > 0) {
+                            strMessage += "- $statusCodeNotGived code(s) saisi(s) n'a(ont) pas été donné(s) par la boutique.\n"
+                        }
+                        if (statusCodeAlreadyUsed > 0) {
+                            strMessage += "- $statusCodeAlreadyUsed code(s) saisi(s) a(ont) déjà été utilisé(s).\n"
+                        }
+                        if (statusError > 0) {
+                            strMessage += "- $statusError erreur(s) inconnue(s).\n"
+                        }
+                        showAlert(
+                            context = this@MyRatingsActivity,
+                            title = "Erreur",
+                            message = strMessage,
+                            negativeButtonText = "Voir les détails",
+                            negativeAction = {
+                                val detailsPage = Intent(this@MyRatingsActivity, MyErrorRatingsActivity::class.java)
+                                startActivity(detailsPage)
+                                finish()
+                            }
+                        )
+                    }
+                } else {
+                    showAlert(
+                        context = this@MyRatingsActivity,
+                        title = "Erreur /2",
+                        message = "Une erreur est survenue lors de l'exportation des notes."
+                    )
+                }
+
+                loadingDialog.dismiss()
+            }
+        } else {
             loadingDialog.dismiss()
+
+            showAlert(
+                context = this@MyRatingsActivity,
+                title = "Erreur",
+                message = "Vous devez saisir au moins 5 notes pour les exporter."
+            )
         }
+    }
+
+    private fun showAlert(
+        context: Context,
+        title: String,
+        message: String,
+        positiveButtonText: String = "OK",
+        positiveAction: (() -> Unit)? = null,
+        negativeButtonText: String? = null,
+        negativeAction: (() -> Unit)? = null
+    ) {
+        val builder = AlertDialog.Builder(context)
+        builder.setTitle(title)
+        builder.setMessage(message)
+        if (positiveAction != null) {
+            builder.setPositiveButton(positiveButtonText) { _, _ -> positiveAction.invoke() }
+        }
+        negativeButtonText?.let {
+            builder.setNegativeButton(it) { _, _ -> negativeAction?.invoke() }
+        }
+        builder.show()
+    }
+
+    private suspend fun ratingIsAnError(ratingDAO: RatingDAO, errorRatingDAO: ErrorRatingDAO, code: String): Boolean {
+        val rating = ratingDAO.getRatingByCode(code)
+        val errorRating = errorRatingDAO.getElementByCode(code)
+
+        return errorRating != null
     }
 }

@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.widget.Button
-import android.widget.EditText
 import android.widget.RatingBar
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.RequiresApi
@@ -14,6 +13,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.room.Room
+import com.example.mobileappnewv.DAO.Rating
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 
@@ -96,7 +96,7 @@ class RatingActivity : AppCompatActivity() {
                 if (existRating != null) {
                     ratingDAO.updateRating(code, companyRating, productRating, priceRating, staffRating, today)
                 } else {
-                    val addRating = Rating(0, candidateId, code, companyRating, productRating, priceRating, staffRating, 0, today)
+                    val addRating = Rating(0, candidateId, code, companyRating, productRating, priceRating, staffRating, 0, 0, today)
                     ratingDAO.insert(addRating)
                 }
             }
@@ -112,14 +112,6 @@ class RatingActivity : AppCompatActivity() {
             builder.show()
         }
 
-
-        // TODO: ONLY FOR DEV
-        val builder = AlertDialog.Builder(this@RatingActivity)
-        builder.setTitle("Code")
-        builder.setMessage("Candidate ID: ${candidateId}\nVotre code est : ${code}\n\nMethod: ${method}")
-        builder.setPositiveButton("OK", null)
-        builder.show()
-
         val btnGoBack = findViewById<Button>(R.id.goBack)
         btnGoBack.setOnClickListener {
             val mainPage = Intent(this, MainActivity::class.java)
@@ -129,9 +121,6 @@ class RatingActivity : AppCompatActivity() {
     }
 
     private fun initDb(): AppDatabase {
-        return Room.databaseBuilder(
-            applicationContext,
-            AppDatabase::class.java, "mydatabase.db"
-        ).build()
+        return AppDatabase.initDb(this)
     }
 }

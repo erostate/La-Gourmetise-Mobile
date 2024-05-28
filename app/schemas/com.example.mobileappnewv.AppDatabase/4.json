@@ -1,12 +1,12 @@
 {
   "formatVersion": 1,
   "database": {
-    "version": 2,
-    "identityHash": "2c7542d59571deef8c51a1a228a9ae74",
+    "version": 4,
+    "identityHash": "69efbd89112709fd46f18feceb4925ec",
     "entities": [
       {
         "tableName": "ratings",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `candidateId` INTEGER NOT NULL, `code` TEXT NOT NULL, `companyRating` INTEGER, `productRating` INTEGER, `priceRating` INTEGER, `staffRating` INTEGER, `exported` INTEGER NOT NULL, `date` TEXT NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `candidateId` INTEGER NOT NULL, `code` TEXT NOT NULL, `companyRating` INTEGER, `productRating` INTEGER, `priceRating` INTEGER, `staffRating` INTEGER, `exported` INTEGER NOT NULL, `error` INTEGER NOT NULL, `date` TEXT NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -53,6 +53,12 @@
           {
             "fieldPath": "exported",
             "columnName": "exported",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "error",
+            "columnName": "error",
             "affinity": "INTEGER",
             "notNull": true
           },
@@ -138,7 +144,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '2c7542d59571deef8c51a1a228a9ae74')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '69efbd89112709fd46f18feceb4925ec')"
     ]
   }
 }

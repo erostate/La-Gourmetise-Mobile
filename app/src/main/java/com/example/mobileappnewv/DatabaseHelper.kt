@@ -6,17 +6,19 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
 
     companion object {
         private const val DATABASE_NAME = "mydatabase.db"
-        private const val DATABASE_VERSION = 1
+        private const val DATABASE_VERSION = 4
     }
 
     override fun onCreate(db: SQLiteDatabase) {
         // Créer les tables de la base de données
-        db.execSQL("CREATE TABLE ratings (id INTEGER PRIMARY KEY, candidate_id INTEGER, code TEXT, company_rating INTEGER, product_rating INTEGER, price_rating INTEGER, staff_rating INTEGER, exported INTEGER DEFAULT 0, date TEXT)")
+        db.execSQL("CREATE TABLE ratings (id INTEGER PRIMARY KEY, candidate_id INTEGER, code TEXT, company_rating INTEGER, product_rating INTEGER, price_rating INTEGER, staff_rating INTEGER, exported INTEGER DEFAULT 0, error INTEGER DEFAULT 0, date TEXT)")
+        db.execSQL("CREATE TABLE error_ratings (id INTEGER PRIMARY KEY, candidate_id INTEGER, code TEXT, company_rating INTEGER, product_rating INTEGER, price_rating INTEGER, staff_rating INTEGER, status TEXT)")
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
         // Mettre à jour la base de données si nécessaire
         db.execSQL("DROP TABLE IF EXISTS ratings")
+        db.execSQL("DROP TABLE IF EXISTS error_ratings")
         onCreate(db)
     }
 }
